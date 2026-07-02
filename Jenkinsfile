@@ -13,6 +13,7 @@ pipeline {
                 }
             }
             steps {
+                sh 'rm -rf node_modules'
                 sh 'npm ci'
                 sh 'npm run build'
             }
@@ -28,6 +29,7 @@ pipeline {
                         }
                     }
                     steps {
+                        sh 'rm -rf node_modules'
                         sh 'npm ci'
                         // Unit tests with Vitest
                         sh 'npm run test:unit -- --reporter=verbose'
@@ -41,6 +43,7 @@ pipeline {
                         }
                     }
                     steps {
+                        sh 'rm -rf node_modules'
                         sh 'npm ci'
                         // Integration tests with Playwright
                         sh 'npx playwright install --with-deps'
