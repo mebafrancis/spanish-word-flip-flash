@@ -28,8 +28,9 @@ pipeline {
                         }
                     }
                     steps {
+                        sh 'npm ci'
                         // Unit tests with Vitest
-                        sh 'npx vitest run --reporter=verbose'
+                        sh 'npm run test:unit -- --reporter=verbose'
                     }
                 }
                 stage('integration tests') {
@@ -40,9 +41,10 @@ pipeline {
                         }
                     }
                     steps {
+                        sh 'npm ci'
                         // Integration tests with Playwright
                         sh 'npx playwright install --with-deps'
-                        sh 'npx playwright test --reporter=verbose'
+                        sh 'npm run test:e2e -- --reporter=verbose'
                     }
                 }
             }
