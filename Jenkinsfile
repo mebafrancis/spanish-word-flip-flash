@@ -1,6 +1,6 @@
 pipeline {
-    agent any
-    
+    agent none
+
     options {
         ansiColor('xterm')
     }
@@ -13,9 +13,11 @@ pipeline {
                 }
             }
             steps {
-                sh 'rm -rf node_modules'
-                sh 'npm ci'
-                sh 'npm run build'
+                sh '''
+                    if [ -d node_modules ]; then rm -rf node_modules; fi
+                    npm ci --no-audit --no-fund
+                    npm run build
+                '''
             }
         }
 
@@ -25,29 +27,28 @@ pipeline {
                     agent {
                         docker {
                             image 'node:22-alpine'
-                            reuseNode true
                         }
                     }
                     steps {
-                        sh 'rm -rf node_modules'
-                        sh 'npm ci'
-                        // Unit tests with Vitest
-                        sh 'npm run test:unit -- --reporter=verbose'
+                        sh '''
+                            if [ -d node_modules ]; then rm -rf node_modules; fi
+                            npm ci --no-audit --no-fund
+                            npm run test:unit -- --reporter=verbose
+                        '''
                     }
                 }
                 stage('integration tests') {
                     agent {
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.54.2-jammy'
-                            reuseNode true
                         }
                     }
                     steps {
-                        sh 'rm -rf node_modules'
-                        sh 'npm ci'
-                        // Integration tests with Playwright
-                        sh 'npx playwright install --with-deps'
-                        sh 'npm run test:e2e -- --reporter=verbose'
+                        sh '''
+                            if [ -d node_modules ]; then rm -rf node_modules; fi
+                            npm ci --no-audit --no-fund
+                            npm run test:e2e -- --reporter=list
+                        '''
                     }
                 }
             }
@@ -60,7 +61,6 @@ pipeline {
                 }
             }
             steps {
-                // Mock deployment which does nothing
                 echo 'Mock deployment was successful!'
             }
         }
