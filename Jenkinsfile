@@ -46,8 +46,7 @@ pipeline {
                         sh 'rm -rf node_modules'
                         sh 'npm ci'
                         // Integration tests with Playwright
-                        sh 'npx playwright install --with-deps'
-                        sh 'npm run test:e2e -- --reporter=verbose'
+                        sh 'npm run test:e2e -- --reporter=list'
                     }
                 }
             }
